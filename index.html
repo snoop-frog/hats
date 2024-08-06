@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MBPA Hat Shop</title>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: Arial, sans-serif; 
+            background-color: #f0f0f0; 
+            color: #333; 
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #d00;
+        }
+        .container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 100%;
+            pointer-events: none; /* Make the container transparent to pointer events */
+        }
+        .product {
+            max-width: 600px;
+            margin: 20px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            pointer-events: auto; /* Enable pointer events for the product box */
+            z-index: 10;
+            position: relative;
+        }
+        .product h2 {
+            margin: 0 0 10px;
+            color: #d00;
+        }
+        .product p {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        .product button {
+            background-color: #d00;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .product button:hover {
+            background-color: #b00;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5; /* Keep the canvas above the background */
+        }
+        /* Background Overlay */
+        #bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://raw.githubusercontent.com/snoop-frog/hats/main/hatbg.webp') no-repeat center center;
+            background-size: cover;
+            opacity: 0.5;
+            z-index: 0; /* Ensure it stays behind other elements */
+        }
+        /* Modal Styles */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 10000; 
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; 
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .modal input, .modal textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .modal button {
+            background-color: #d00;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .modal button:hover {
+            background-color: #b00;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>MBPA Hat Shop</h1>
+        <nav>
+            <a href="#" style="margin-right: 20px; text-decoration: none; color: #d00;">Home</a>
+            <a href="#" style="margin-right: 20px; text-decoration: none; color: #d00;">Products</a>
+            <a href="#" style="text-decoration: none; color: #d00;">Contact</a>
+        </nav>
+    </header>
+    <div id="bg-overlay"></div>
+    <div class="container">
+        <div class="product">
+            <h2>Make Bitcoin Pump Again Hat</h2>
+            <p>Show your support of Bitcoin pumping with the OFFICIAL MBPA Hat</p>
+            <p>AS SEEN ON TV</p>
+            <p>Michael Saylor has one, what else do you need to know</p>
+            <p><strong>Price:</strong> $39.99</p>
+            <button id="buyNowBtn">Buy Now</button>
+        </div>
+    </div>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Purchase Information</h2>
+            <p>Send the payment to the following Bitcoin address:</p>
+            <p><strong>Bitcoin Address:</strong> 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
+            <form id="purchaseForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="address">Delivery Address:</label>
+                <textarea id="address" name="address" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script>
+    let scene, camera, renderer, hat, controls, mouseLight;
+    let lightColor = 0xff0000;
+
+    function init() {
+        // Create scene
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000000); // Keep black background
+
+        // Create camera
+        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000); // Reduced FoV
+        camera.position.set(-0.10, 6.37, 8.29); // Set the specified camera position
+        camera.rotation.set(-0.66, -0.01, -0.01); // Set the specified camera rotation
+
+        // Create renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Add orbit controls
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = false;
+        controls.maxPolarAngle = Math.PI / 2;
+
+        // Add light
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 5); // Increase intensity
+        directionalLight.position.set(0, 1, 1).normalize();
+        scene.add(directionalLight);
+
+        const ambientLight = new THREE.AmbientLight(0x404040, 5); // Increase intensity
+        scene.add(ambientLight);
+
+        // Add additional light
+        const additionalLight = new THREE.PointLight(0xffffff, 5, 100);
+        additionalLight.position.set(2, 3, 4);
+        scene.add(additionalLight);
+
+        // Add mouse light
+        mouseLight = new THREE.PointLight(lightColor, 5, 100);
+        scene.add(mouseLight);
+
+        // Load hat model from Google Cloud Storage
+        const gltfLoader = new THREE.GLTFLoader();
+        const url = 'https://storage.googleapis.com/mbpahats/Trump01.glb'; // Use the provided public URL
+        gltfLoader.load(url, function (gltf) {
+            hat = gltf.scene;
+            hat.position.set(0, 0, 0); // Adjust position if needed
+            hat.rotation.x = 0; // Adjust rotation to match desired view
+            hat.scale.set(0.05, 0.05, 0.05); // Scale down the model
+            scene.add(hat);
+            animate();
+        }, function (xhr) {
+            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+        }, function (error) {
+            console.log('An error happened');
+        });
+
+        // Set interval to change light color
+        setInterval(() => {
+            lightColor = (lightColor === 0xff0000) ? 0x0000ff : 0xff0000;
+            mouseLight.color.setHex(lightColor);
+        }, 500); // Change color every 500ms
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    function onMouseMove(event) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width * 2 - 1;
+        const y = -(event.clientY - rect.top) / rect.height * 2 + 1;
+        const vector = new THREE.Vector3(x, y, 0.5).unproject(camera);
+        const dir = vector.sub(camera.position).normalize();
+        const distance = -camera.position.z / dir.z;
+        const pos = camera.position.clone().add(dir.multiplyScalar(distance));
+        mouseLight.position.copy(pos);
+    }
+
+    window.addEventListener('resize', function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    window.addEventListener('mousemove', onMouseMove, false);
+
+    init();
+
+    // Modal functionality
+    const modal = document.getElementById("myModal");
+    const btn = document.getElementById("buyNowBtn");
+    const span = document.getElementsByClassName("close")[0];
+    const form = document.getElementById("purchaseForm");
+
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        alert('Thank you for your purchase! We will contact you soon.');
+        modal.style.display = "none";
+    }
+</script>
+
+</body>
+</html>
