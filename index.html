@@ -3,310 +3,673 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MBPA Hat Shop</title>
+    <title>MAKE BITCOIN PUMP AGAIN - Official Hat</title>
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/model-viewer/3.1.1/model-viewer.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { 
-            margin: 0; 
-            font-family: Arial, sans-serif; 
-            background-color: #f0f0f0; 
-            color: #333; 
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        header h1 {
+        body, html {
             margin: 0;
-            font-size: 1.5em;
-            color: #d00;
+            padding: 0;
+            font-family: 'Libre Baskerville', serif;
+            background-color: #f5f5f5;
+            color: #333;
+            height: 100%;
+            overflow: hidden;
+            letter-spacing: -0.03em;
         }
         .container {
             display: flex;
-            align-items: flex-end;
-            justify-content: center;
-            height: 100%;
-            pointer-events: none; /* Make the container transparent to pointer events */
+            flex-direction: column;
+            height: 100vh;
         }
-        .product {
-            max-width: 600px;
-            margin: 20px;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            text-align: center;
-            pointer-events: auto; /* Enable pointer events for the product box */
-            z-index: 10;
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #f5f5f5;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 24px;
+            color: #cc0000;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+        }
+        .nav-links {
             position: relative;
         }
-        .product h2 {
-            margin: 0 0 10px;
-            color: #d00;
-        }
-        .product p {
-            font-size: 1.1em;
-            margin: 10px 0;
-        }
-        .product button {
-            background-color: #d00;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
+        .cart-icon {
+            width: 28px;
+            height: 28px;
             cursor: pointer;
-            border-radius: 5px;
+            color: #333;
         }
-        .product button:hover {
-            background-color: #b00;
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #cc0000;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .cart-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 280px;
+            z-index: 100;
+            border-radius: 4px;
+        }
+        .cart-dropdown .item-count {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .cart-dropdown .item-count span {
+            font-size: 16px;
+        }
+        .cart-dropdown .btn-increment {
+            display: flex;
+            align-items: center;
+        }
+        .cart-dropdown button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background-color: #cc0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .cart-dropdown button:hover {
+            background-color: #990000;
+        }
+        .cart-dropdown .cart-price {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .cart-dropdown .buy-now-btn {
+            margin-top: 15px;
+            display: block;
+            text-align: center;
+            width: 100%;
+        }
+        main {
+            flex-grow: 1;
+            position: relative;
+        }
+        #model-container {
             width: 100%;
             height: 100%;
-            z-index: 5; /* Keep the canvas above the background */
+            transition: filter 0.3s ease;
         }
-        /* Background Overlay */
-        #bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        model-viewer {
             width: 100%;
             height: 100%;
-            background: url('https://raw.githubusercontent.com/snoop-frog/hats/main/hatbg.webp') no-repeat center center;
-            background-size: cover;
-            opacity: 0.5;
-            z-index: 0; /* Ensure it stays behind other elements */
+            --poster-color: #f5f5f5;
         }
-        /* Modal Styles */
+        .bottom-content {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(245, 245, 245, 0.9);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+            font-weight: 700;
+        }
+        .color-options {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 0 20px;
+        }
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .color-option:hover, .color-option.active {
+            transform: scale(1.1);
+        }
+        .color-option.red { background-color: #cc0000; }
+        .color-option.orange { background-color: #ff6600; }
+        .color-option.green { background-color: #00cc00; }
+        .color-option.blue { background-color: #0066cc; }
+        .color-option.navy { background-color: #003366; }
+        .color-option.black { background-color: #000000; }
+        .cta-button {
+            font-family: 'Libre Baskerville', serif;
+            display: inline-block;
+            background-color: #cc0000;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 4px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+        }
+        .cta-button:hover {
+            background-color: #990000;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            color: #666;
+            background-color: #f5f5f5;
+            border-top: 1px solid #e0e0e0;
+        }
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 10000; 
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto; 
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4); 
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
         }
         .modal-content {
             background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
+            margin: 5% auto;
+            padding: 30px;
             border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         .close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
         }
         .close:hover,
         .close:focus {
-            color: black;
+            color: #333;
             text-decoration: none;
+        }
+        #qrcode {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #countdown {
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 15px;
+            color: #cc0000;
+        }
+        #txid {
+            margin-top: 20px;
+            font-size: 16px;
+            width: 100%;
+            padding: 12px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .confirm-button {
+            background-color: #ccc;
+            color: white;
+            padding: 12px 24px;
+            font-weight: 700;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: not-allowed;
+            transition: background-color 0.3s ease;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .confirm-button.active {
+            background-color: #cc0000;
             cursor: pointer;
         }
-        .modal input, .modal textarea {
+        .confirm-button.active:hover {
+            background-color: #990000;
+        }
+        .order-confirmation {
+            display: none;
+            text-align: center;
+            padding: 50px;
+            font-size: 18px;
+        }
+        #checkoutForm {
+            display: grid;
+            gap: 15px;
+        }
+        #checkoutForm label {
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+        }
+        #checkoutForm input,
+        #checkoutForm select {
             width: 100%;
             padding: 10px;
-            margin: 10px 0;
             border: 1px solid #ccc;
-            border-radius: 5px;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
         }
-        .modal button {
-            background-color: #d00;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1em;
-            cursor: pointer;
-            border-radius: 5px;
+        #checkoutForm select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 12px auto;
         }
-        .modal button:hover {
-            background-color: #b00;
+        #totalPrice {
+            font-size: 28px;
+            font-weight: 700;
+            color: #cc0000;
+            display: block;
+            margin-top: 20px;
+            text-align: right;
+            text-transform: uppercase;
+            letter-spacing: -0.05em;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .button-group button {
+            flex: 1;
+            margin: 0 5px;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>MBPA Hat Shop</h1>
-        <nav>
-            <a href="#" style="margin-right: 20px; text-decoration: none; color: #d00;">Home</a>
-            <a href="#" style="margin-right: 20px; text-decoration: none; color: #d00;">Products</a>
-            <a href="#" style="text-decoration: none; color: #d00;">Contact</a>
-        </nav>
-    </header>
-    <div id="bg-overlay"></div>
     <div class="container">
-        <div class="product">
-            <h2>Make Bitcoin Pump Again Hat</h2>
-            <p>Show your support of Bitcoin pumping with the OFFICIAL MBPA Hat</p>
-            <p>AS SEEN ON TV</p>
-            <p>Michael Saylor has one, what else do you need to know</p>
-            <p><strong>Price:</strong> $39.99</p>
-            <button id="buyNowBtn">Buy Now</button>
+        <header>
+            <div class="logo">MAKE BITCOIN PUMP AGAIN</div>
+            <nav class="nav-links">
+                <div class="cart-icon-container">
+                    <svg class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    <span class="cart-counter" style="display: none;">0</span>
+                    <div class="cart-dropdown">
+                        <div class="item-count">
+                            <span>Items in Cart: <span id="cartItemCount">0</span></span>
+                            <div class="btn-increment">
+                                <button id="decrementBtn">-</button>
+                                <button id="incrementBtn">+</button>
+                            </div>
+                        </div>
+                        <div class="cart-price">Total Price: <span id="cartTotalPrice">0.00000000 BTC</span></div>
+                        <button class="buy-now-btn cta-button">Buy Now</button>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main>
+            <div id="model-container">
+                <model-viewer
+                    id="hat-model"
+                    alt="MAGA Hat 3D Model"
+                    auto-rotate
+                    camera-controls
+                    shadow-intensity="1"
+                    exposure="1"
+                ></model-viewer>
+            </div>
+        </main>
+
+        <div class="bottom-content">
+            <div class="color-options">
+                <button class="color-option red active" data-color="red"></button>
+                <button class="color-option orange" data-color="orange"></button>
+                <button class="color-option green" data-color="green"></button>
+                <button class="color-option blue" data-color="blue"></button>
+                <button class="color-option navy" data-color="navy"></button>
+                <button class="color-option black" data-color="black"></button>
+            </div>
+            <a href="#" class="cta-button" id="buyNowBtnBottom">Buy Now</a>
         </div>
+
+        <footer>
+            <p>&copy; 2024 Bitcoin Pump Again</p>
+        </footer>
     </div>
 
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
+    <!-- Order Received -->
+    <div class="order-confirmation" id="orderConfirmationPage">
+        <h2>Order Received</h2>
+        <p>Stand by for a shipping confirmation if you requested a tracked delivery.</p>
+        <p>Thank you for choosing to Make Bitcoin Pump Again! Be sure to tell all your normie no-coiners!</p>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Purchase Information</h2>
-            <p>Send the payment to the following Bitcoin address:</p>
-            <p><strong>Bitcoin Address:</strong> 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p>
-            <form id="purchaseForm">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                <label for="address">Delivery Address:</label>
-                <textarea id="address" name="address" required></textarea>
-                <button type="submit">Submit</button>
-            </form>
+            <h2>Checkout</h2>
+            <div id="checkoutForm">
+                <div>
+<label for="quantity">Quantity:</label>
+                    <input type="number" id="quantity" min="1" value="1">
+                </div>
+                <div>
+                    <label for="shipping">Shipping:</label>
+                    <select id="shipping">
+                        <option value="9.99">USA Domestic ($9.99)</option>
+                        <option value="19.98">USA Next Working Day ($19.98)</option>
+                        <option value="29.97">International ($29.97)</option>
+                        <option value="39.96">International Express and Tracked ($39.96)</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="Your Email">
+                </div>
+                <div>
+                    <label for="contactNumber">Contact Number:</label>
+                    <input type="tel" id="contactNumber" placeholder="Your Contact Number">
+                </div>
+                <div>
+                    <label for="address">Address Line 1:</label>
+                    <input type="text" id="address" placeholder="Street Address">
+                </div>
+                <div>
+                    <label for="city">City:</label>
+                    <input type="text" id="city" placeholder="City">
+                </div>
+                <div>
+                    <label for="state">State/Province/Region:</label>
+                    <input type="text" id="state" placeholder="State/Province">
+                </div>
+                <div>
+                    <label for="zip">Postal Code:</label>
+                    <input type="text" id="zip" placeholder="Postal Code">
+                </div>
+                <div>
+                    <label for="country">Country:</label>
+                    <input type="text" id="country" placeholder="Country">
+                </div>
+
+                <div>
+                    <span id="totalPrice"></span>
+                </div>
+                <div class="button-group">
+                    <button id="addToCartBtn" class="cta-button">Add to Cart</button>
+                    <button id="payNowBtn" class="cta-button">Pay Now</button>
+                </div>
+            </div>
+            <div id="paymentInfo" style="display:none;">
+                <h3>Payment Information</h3>
+                <div id="qrcode">
+                    <img src="https://github.com/snoop-frog/hats/raw/main/qr" alt="Bitcoin QR Code" style="width: 200px; height: 200px;">
+                </div>
+                <p>Time Remaining: <span id="countdown"></span></p>
+                <p>Bitcoin Address: <span id="btcAddress"></span></p>
+                <p>Awaiting payment...</p>
+
+                <input type="text" id="txid" placeholder="Paste TXID here">
+                <button id="confirmOrderBtn" class="confirm-button">CONFIRM ORDER</button>
+            </div>
         </div>
     </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script>
-    let scene, camera, renderer, hat, controls, mouseLight;
-    let lightColor = 0xff0000;
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modelViewer = document.getElementById('hat-model');
+        const txidInput = document.getElementById('txid');
+        const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+        const modalContent = document.querySelector('.modal-content');
+        const cartCounter = document.querySelector(".cart-counter");
+        const cartDropdown = document.querySelector(".cart-dropdown");
+        const cartItemCountElement = document.getElementById('cartItemCount');
+        const cartTotalPriceElement = document.getElementById('cartTotalPrice');
+        const incrementBtn = document.getElementById('incrementBtn');
+        const decrementBtn = document.getElementById('decrementBtn');
+        const cartIconContainer = document.querySelector('.cart-icon-container');
+        const buyNowBtnBottom = document.getElementById('buyNowBtnBottom');
+        const modal = document.getElementById("checkoutModal");
+        const closeBtn = document.getElementsByClassName("close")[0];
+        const buyNowBtnDropdown = document.querySelector(".buy-now-btn");
+        const totalPriceSpan = document.getElementById("totalPrice");
+        const addToCartBtn = document.getElementById("addToCartBtn");
+        const payNowBtn = document.getElementById("payNowBtn");
+        const quantityField = document.getElementById("quantity");
+        const shippingSelect = document.getElementById("shipping");
+        const colorOptions = document.querySelectorAll('.color-option');
+        const modelContainer = document.getElementById('model-container');
 
-    function init() {
-        // Create scene
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x000000); // Keep black background
+        let cartItemCount = 0;
+        const pricePerUnit = 0.0008;  // Price per hat
+        const bitcoinAddress = "bc1p0udwtp4007prgt42r4skqnn3ueqpjkuuydalt975sqvu2nzpr2ns63rxyg";
 
-        // Create camera
-        camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000); // Reduced FoV
-        camera.position.set(-0.10, 6.37, 8.29); // Set the specified camera position
-        camera.rotation.set(-0.66, -0.01, -0.01); // Set the specified camera rotation
+        // Disable confirm button by default
+        confirmOrderBtn.disabled = true;
 
-        // Create renderer
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.body.appendChild(renderer.domElement);
+        function isValidURL(string) {
+            const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            return !!pattern.test(string);
+        }
 
-        // Add orbit controls
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.25;
-        controls.screenSpacePanning = false;
-        controls.maxPolarAngle = Math.PI / 2;
+        function updateCartCounter() {
+            cartItemCountElement.textContent = cartItemCount;
+            cartCounter.style.display = cartItemCount > 0 ? "flex" : "none";
+            cartCounter.textContent = cartItemCount;
+        }
 
-        // Add light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 5); // Increase intensity
-        directionalLight.position.set(0, 1, 1).normalize();
-        scene.add(directionalLight);
+        function updateTotalPrice() {
+            const shippingCost = parseFloat(shippingSelect.value) || 0;
+            const modalQuantity = parseInt(quantityField.value) || 0;
+            const cartTotal = (cartItemCount * pricePerUnit + shippingCost / 20000).toFixed(8);
+            const modalTotal = (modalQuantity * pricePerUnit + shippingCost / 20000).toFixed(8);
+            
+            cartTotalPriceElement.textContent = cartTotal + " BTC";
+            totalPriceSpan.textContent = modalTotal + " BTC";
+        }
 
-        const ambientLight = new THREE.AmbientLight(0x404040, 5); // Increase intensity
-        scene.add(ambientLight);
+        function syncCartWithCheckout() {
+            quantityField.value = cartItemCount;
+            updateTotalPrice();
+        }
 
-        // Add additional light
-        const additionalLight = new THREE.PointLight(0xffffff, 5, 100);
-        additionalLight.position.set(2, 3, 4);
-        scene.add(additionalLight);
+        function openCheckoutModal() {
+            syncCartWithCheckout();
+            modal.style.display = "block";
+        }
 
-        // Add mouse light
-        mouseLight = new THREE.PointLight(lightColor, 5, 100);
-        scene.add(mouseLight);
+        function closeModal() {
+            modal.style.display = "none";
+            document.getElementById("checkoutForm").style.display = "block";
+            document.getElementById("paymentInfo").style.display = "none";
+        }
 
-        // Load hat model from Google Cloud Storage
-        const gltfLoader = new THREE.GLTFLoader();
-        const url = 'https://storage.googleapis.com/mbpahats/Trump01.glb'; // Use the provided public URL
-        gltfLoader.load(url, function (gltf) {
-            hat = gltf.scene;
-            hat.position.set(0, 0, 0); // Adjust position if needed
-            hat.rotation.x = 0; // Adjust rotation to match desired view
-            hat.scale.set(0.05, 0.05, 0.05); // Scale down the model
-            scene.add(hat);
-            animate();
-        }, function (xhr) {
-            console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-        }, function (error) {
-            console.log('An error happened');
+        function showOrderConfirmationInModal() {
+            modalContent.innerHTML = `
+                <h2>Order Received</h2>
+                <p>Stand by for a shipping confirmation if you requested a tracked delivery.</p>
+                <p>Thank you for choosing to Make Bitcoin Pump Again! Be sure to tell all your normie no-coiners!</p>
+            `;
+        }
+
+        function startPaymentProcess() {
+            document.getElementById("checkoutForm").style.display = "none";
+            document.getElementById("paymentInfo").style.display = "block";
+
+            document.getElementById("btcAddress").textContent = bitcoinAddress;
+
+            let timeLeft = 30 * 60;
+            const countdownTimer = setInterval(function() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("countdown").textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    document.getElementById("countdown").textContent = "Time's up!";
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        // Event Listeners
+        cartIconContainer.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cartDropdown.style.display = cartDropdown.style.display === 'block' ? 'none' : 'block';
         });
 
-        // Set interval to change light color
-        setInterval(() => {
-            lightColor = (lightColor === 0xff0000) ? 0x0000ff : 0xff0000;
-            mouseLight.color.setHex(lightColor);
-        }, 500); // Change color every 500ms
-    }
+        incrementBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            cartItemCount++;
+            updateCartCounter();
+            updateTotalPrice();
+        });
 
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
+        decrementBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (cartItemCount > 0) {
+                cartItemCount--;
+                updateCartCounter();
+                updateTotalPrice();
+            }
+        });
 
-    function onMouseMove(event) {
-        const rect = renderer.domElement.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width * 2 - 1;
-        const y = -(event.clientY - rect.top) / rect.height * 2 + 1;
-        const vector = new THREE.Vector3(x, y, 0.5).unproject(camera);
-        const dir = vector.sub(camera.position).normalize();
-        const distance = -camera.position.z / dir.z;
-        const pos = camera.position.clone().add(dir.multiplyScalar(distance));
-        mouseLight.position.copy(pos);
-    }
+        buyNowBtnDropdown.addEventListener('click', () => {
+            openCheckoutModal();
+            cartDropdown.style.display = 'none';
+        });
 
-    window.addEventListener('resize', function () {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        buyNowBtnBottom.addEventListener('click', openCheckoutModal);
+
+        closeBtn.addEventListener('click', closeModal);
+
+        addToCartBtn.addEventListener('click', () => {
+            const quantityToAdd = parseInt(quantityField.value) || 0;
+            cartItemCount += quantityToAdd;
+            updateCartCounter();
+            updateTotalPrice();
+            closeModal();
+        });
+
+        payNowBtn.addEventListener('click', startPaymentProcess);
+
+        confirmOrderBtn.addEventListener('click', showOrderConfirmationInModal);
+
+        txidInput.addEventListener("input", () => {
+            const isValid = isValidURL(txidInput.value);
+            confirmOrderBtn.disabled = !isValid;
+            confirmOrderBtn.classList.toggle("active", isValid);
+        });
+
+        quantityField.addEventListener("input", updateTotalPrice);
+
+        shippingSelect.addEventListener("change", updateTotalPrice);
+
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const color = this.dataset.color;
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+
+                switch(color) {
+                    case 'red':
+                        modelContainer.style.filter = 'none';
+                        break;
+                    case 'orange':
+                        modelContainer.style.filter = 'hue-rotate(30deg) saturate(150%)';
+                        break;
+                    case 'green':
+                        modelContainer.style.filter = 'hue-rotate(120deg) saturate(150%)';
+                        break;
+                    case 'blue':
+                        modelContainer.style.filter = 'hue-rotate(210deg) saturate(150%)';
+                        break;
+                    case 'navy':
+                        modelContainer.style.filter = 'hue-rotate(210deg) saturate(150%) brightness(70%)';
+                        break;
+                    case 'black':
+                        modelContainer.style.filter = 'brightness(50%) saturate(0%)';
+                        break;
+                }
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!cartIconContainer.contains(e.target)) {
+                cartDropdown.style.display = 'none';
+            }
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        updateCartCounter();
+        updateTotalPrice();
+
+        const originalUrl = 'https://github.com/snoop-frog/hats/raw/main/compressedlatest.glb';
+        const corsProxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(originalUrl);
+
+        modelViewer.src = corsProxyUrl;
+
+        modelViewer.addEventListener('error', function(error) {
+            console.error('Error loading 3D model:', error);
+            const fallbackImage = document.createElement('img');
+            fallbackImage.src = '/api/placeholder/400/400';
+            fallbackImage.alt = 'MAGA Hat';
+            fallbackImage.style = 'width: 100%; height: 100%; object-fit: contain;';
+            modelViewer.parentNode.replaceChild(fallbackImage, modelViewer);
+        });
     });
-
-    window.addEventListener('mousemove', onMouseMove, false);
-
-    init();
-
-    // Modal functionality
-    const modal = document.getElementById("myModal");
-    const btn = document.getElementById("buyNowBtn");
-    const span = document.getElementsByClassName("close")[0];
-    const form = document.getElementById("purchaseForm");
-
-    btn.onclick = function() {
-        modal.style.display = "block";
-    }
-
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-    }
-
-    form.onsubmit = function(event) {
-        event.preventDefault();
-        alert('Thank you for your purchase! We will contact you soon.');
-        modal.style.display = "none";
-    }
-</script>
-
+    </script>
 </body>
 </html>
